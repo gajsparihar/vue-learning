@@ -6,7 +6,8 @@ new Vue({
       gameStarted : false,
       myCurrentHealth : 100,
       compCurrentHealth : 100,
-      interval : null
+      interval : null,
+      logs : []
    },
 
    computed : {
@@ -46,30 +47,57 @@ new Vue({
        
        finishGame: function () {
            this.gameStarted = false;
+           this.myCurrentHealth = this.compCurrentHealth = 100;
+           clearInterval(this.interval) ;
+       },
+
+
+       attackAlgo : function (power, num) {
+           
+
+            var obj = {};
+            if (num > 5) {
+                obj.player = false; 
+                this.myCurrentHealth -=power;
+            } else {
+                obj.player = true;
+                this.compCurrentHealth -=power;
+            }
+
+            this.logs.push(obj);
        },
 
        gameOver: function () {
          this.finishGame();
-         clearInterval(this.interval) ;
+         
        },
 
        attack : function () {
           var me = this;
-          alert('ere');
+          
           this.interval = setInterval(function() {
             var num =  Math.floor((Math.random() * 10) + 1);
-            console.log(num);
-
-            if (num > 5) {
-                me.myCurrentHealth -=5;
-            } else {
-                me.compCurrentHealth -=5;
-            }
+            me.attackAlgo(5, num);
 
           }, 1000);
 
 
-       }
+       },
+
+       heal: function () {
+
+           if (this.myCurrentHealth <= 100) {
+
+                this.myCurrentHealth += 5;
+
+                this.myCurrentHealth > 100 ? 100 : this.myCurrentHealth;
+
+           }
+       },
+
+       specialAttack: function () {
+        this.attackAlgo(20, 1);
+      }
 
    }
 
